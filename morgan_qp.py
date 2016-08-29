@@ -115,17 +115,17 @@ print("q:", q)
 #   B2 > B1
 #   B1 > 0
 # Equivalently:
-#   B0 - B1 > 0
-#   B3 - B2 > 0
-#   B2 - B1 > 0
-#   B1      > 0
+#   0 > B1 - B0
+#   0 > B2 - B3
+#   0 > B1 - B2
+#   0 > - B1
 # Thus, we can let h = 0 (vector of zeros), and let G be the following matrix:
 G = matrix([
-    [1.0, -1.0, 0.0, 0.0],
-    [0.0, 0.0, -1.0, 1.0],
-    [0.0, -1.0, 1.0, 0.0],
-    [0.0, 1.0, 0.0, 0.0],
-])
+    [-1.0, 1.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0, -1.0],
+    [0.0, 1.0, -1.0, 0.0],
+    [0.0, -1.0, 0.0, 0.0],
+]).ctrans()
 h = matrix([0.0, 0.0, 0.0, 0.0])
 
 print("G:", G)
@@ -136,10 +136,10 @@ print("h:", h)
 solution = solvers.qp(P, q, G, h)
 
 # Print solution and helpful message. Current solution on test CSV data is:
-#     B0 = -1.00
-#     B1 = -0.924
-#     B2 = -1.92
-#     B3 = -3.92
+# Solution: B0 = 1.36e+07
+#           B1 = 1.36e+07
+#           B2 = 1.36e+07
+#           B3 = 1.40e+07
 print()
 print("Optimal solution? " + "Yes!" if solution["status"] == "optimal" else "No :(")
 print("Solution:", solution['x'])
