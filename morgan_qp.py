@@ -173,16 +173,18 @@ print("Does this make *any* physical sense? I don't know. That's up to you!")
 import numpy as np
 
 def FitPlotter(param):
-    x1=np.linspace(min(H),max(H),3*len(H))
-    x2=np.linspace(min(L),max(L),3*len(L))
+    xH=np.linspace(min(H),max(H),3*len(H))
+    xL=np.linspace(min(L),max(L),3*len(L))
     y=param[0]*x1*x2+param[1]*x2+param[2]*x2**2+param[3]*x2**3
-    test.scatter(x2,x1,y)
+    test.wireframe(xL,xH,y)
 
+Beta0, Beta1, Beta2, Beta3 = solution['x'][0], solution['x'][1], solution['x'][2], solution['x'][3]
 
 fig=plt.figure()
 test=fig.add_subplot(111,projection='3d')
 getValueLists(data)
+FitPlotter([Beta0, Beta1, Beta2, Beta3])
 plt.show()
-#FitPlotter(solution)
+
 
 print("Hopefully at least this demo helps you in some way, though!")
