@@ -50,10 +50,10 @@ linearized = [transform(*point) for point in data]
 from cvxopt import matrix, solvers
 def Pq_contribution(y, v_0, v_1, v_2, v_3):
     # The linear pieces (contributions to q)
-    q = matrix([-2.0 * v_0 * y, # b_0
-         -2.0 * v_1 * y, # b_1
-         -2.0 * v_2 * y, # b_2
-         -2.0 * v_3 * y, # b_3
+    q = matrix([-2.0 * v_0 * y/e**2, # b_0
+         -2.0 * v_1 * y/e**2, # b_1
+         -2.0 * v_2 * y/e**2, # b_2
+         -2.0 * v_3 * y/e**2, # b_3
         ])
     # The quadratic pieces (contributions to P)
     P = matrix([
