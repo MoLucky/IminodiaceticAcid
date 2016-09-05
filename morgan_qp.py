@@ -13,6 +13,33 @@ def transform(H, L, y):
 # variables); by doing so, our function fxn becomes a linear function.
 linearized = [transform(*point) for point in data]
 
+#create vectors of raw data to plot
+H=[]
+L=[]
+yexp=[]
+
+from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+
+
+def getValueLists(data):
+    if len(data)==0:
+        test.scatter(L,H,yexp)
+        xmin=min(L)-0.1*min(L)
+        xmax=max(L)+0.1*min(L)
+        ymin=min(H)-0.1*min(H)
+        ymax=max(H)+0.1*min(H)
+        #test.axis([xmin,xmax,ymin,ymax])
+        test.set_ylabel('[H+]')
+        test.set_xlabel('[L2-]')
+        test.set_zlabel('D0/D-1')
+    else:
+        point=data.pop()
+        H.append(point[0])
+        L.append(point[1])
+        yexp.append(point[2])
+        getValueLists(data)
+
 # Next we use CVXOPT to solve a quadratic program, using this page as a guide:
 #       http://cvxopt.org/examples/tutorial/qp.html
 # The main documentation for the used function is here:
@@ -135,13 +162,29 @@ print("h:", h)
 # eager with anticipation... oh no... what will happen...
 solution = solvers.qp(P, q, G, h)
 
-# Print solution and helpful message. Current solution on test CSV data is:
-# Solution: B0 = 1.36e+07
-#           B1 = 1.36e+07
-#           B2 = 1.36e+07
-#           B3 = 1.40e+07
+# Print solution and helpful message.
+
 print()
 print("Optimal solution? " + "Yes!" if solution["status"] == "optimal" else "No :(")
 print("Solution:", solution['x'])
 print("Does this make *any* physical sense? I don't know. That's up to you!")
+
+# Plot Raw and fitted data together
+import numpy as np
+
+def FitPlotter(param):
+    xH=np.linspace(min(H),max(H),3*len(H))
+    xL=np.linspace(min(L),max(L),3*len(L))
+    y=param[0]*x1*x2+param[1]*x2+param[2]*x2**2+param[3]*x2**3
+    test.wireframe(xL,xH,y)
+
+Beta0, Beta1, Beta2, Beta3 = solution['x'][0], solution['x'][1], solution['x'][2], solution['x'][3]
+
+fig=plt.figure()
+test=fig.add_subplot(111,projection='3d')
+getValueLists(data)
+FitPlotter([Beta0, Beta1, Beta2, Beta3])
+plt.show()
+
+
 print("Hopefully at least this demo helps you in some way, though!")
