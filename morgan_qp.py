@@ -2,10 +2,10 @@
 from __future__ import print_function
 
 # Load the file into a list of (H, L, y) tuples
-with open("luckeyfxnsample_g.csv", "r") as handle:
+with open("luckeyfxnsample_gVaryHDEHPVaryHwitherror.csv", "r") as handle:
     data = [tuple(float(x) for x in line.split(",")) for line in handle]
 
-def transform(H, L, y):
+def transform(H, L, y,error):
     """Transform (H, L, y) tuples into (y, HL, L, L^2, L^3) tuples."""
     return y, H * L, L, L * L, L * L * L
 
@@ -17,6 +17,7 @@ linearized = [transform(*point) for point in data]
 H=[]
 L=[]
 yexp=[]
+e=[]
 
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
@@ -33,11 +34,15 @@ def getValueLists(data):
         test.set_ylabel('[H+]')
         test.set_xlabel('[L2-]')
         test.set_zlabel('D0/D-1')
+        #plot errorbars
+        for i in np.arange(0, len(yexp)):
+            test.plot([L[i], L[i]], [H[i], H[i]], [yexp[i]+e[i], yexp[i]-e[i]], marker="_")
     else:
         point=data.pop()
         H.append(point[0])
         L.append(point[1])
         yexp.append(point[2])
+        e.append(point[3])
         getValueLists(data)
 
 # Next we use CVXOPT to solve a quadratic program, using this page as a guide:
@@ -175,8 +180,8 @@ import numpy as np
 def FitPlotter(param):
     xH=np.linspace(min(H),max(H),3*len(H))
     xL=np.linspace(min(L),max(L),3*len(L))
-    y=param[0]*x1*x2+param[1]*x2+param[2]*x2**2+param[3]*x2**3
-    test.wireframe(xL,xH,y)
+    y=param[0]*xH*xL+param[1]*xL+param[2]*xL**2+param[3]*xL**3
+    test.plot_wireframe(xL,xH,y)
 
 Beta0, Beta1, Beta2, Beta3 = solution['x'][0], solution['x'][1], solution['x'][2], solution['x'][3]
 
